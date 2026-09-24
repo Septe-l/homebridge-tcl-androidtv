@@ -1,0 +1,258 @@
+{
+  "pluginAlias": "TclAndroidTV",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "TCL Android TV をネットワーク ADB 経由で操作します。事前にテレビの「開発者向けオプション」で USB デバッグ（ネットワークデバッグ）を有効にし、Homebridge ホストに adb をインストールしてください。",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "devices": {
+        "type": "array",
+        "title": "テレビ",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "名前",
+              "default": "リビングのテレビ",
+              "required": true
+            },
+            "host": {
+              "type": "string",
+              "title": "IPアドレス",
+              "format": "ipv4",
+              "required": true
+            },
+            "port": {
+              "type": "integer",
+              "title": "ADBポート",
+              "default": 5555
+            },
+            "model": {
+              "type": "string",
+              "title": "モデル",
+              "default": "65X10"
+            },
+            "macAddress": {
+              "type": "string",
+              "title": "MACアドレス (Wake-on-LAN用・任意)",
+              "placeholder": "AA:BB:CC:DD:EE:FF"
+            },
+            "broadcastAddress": {
+              "type": "string",
+              "title": "WoL ブロードキャストアドレス",
+              "placeholder": "255.255.255.255"
+            },
+            "adbPath": {
+              "type": "string",
+              "title": "adb コマンドのパス",
+              "default": "adb"
+            },
+            "adbHome": {
+              "type": "string",
+              "title": "ADB の鍵の保存先 (HOME)",
+              "description": "既定値は Homebridge のストレージディレクトリです（<storage>/.android/adbkey）。"
+            },
+            "pollInterval": {
+              "type": "integer",
+              "title": "状態取得間隔 (秒)",
+              "default": 5,
+              "minimum": 2
+            },
+            "timeout": {
+              "type": "integer",
+              "title": "adb タイムアウト (秒)",
+              "default": 5,
+              "minimum": 1
+            },
+            "wakeTimeout": {
+              "type": "integer",
+              "title": "電源オン時に接続を待つ最大時間 (秒)",
+              "default": 20,
+              "minimum": 1
+            },
+            "wakeDelay": {
+              "type": "number",
+              "title": "電源オフ時に入力切替する際の起動待ち (秒)",
+              "default": 3,
+              "minimum": 0
+            },
+            "volumeSlider": {
+              "type": "string",
+              "title": "ホームアプリの音量スライダー",
+              "default": "fan",
+              "oneOf": [
+                {
+                  "title": "扇風機として表示（おすすめ）",
+                  "enum": [
+                    "fan"
+                  ]
+                },
+                {
+                  "title": "電球として表示",
+                  "enum": [
+                    "lightbulb"
+                  ]
+                },
+                {
+                  "title": "表示しない",
+                  "enum": [
+                    "none"
+                  ]
+                }
+              ],
+              "description": "扇風機の風量 = 音量、オフ = ミュートです。電球にすると「電気を全部消して」でミュートされます。"
+            },
+            "maxVolume": {
+              "type": "integer",
+              "title": "音量の上限",
+              "default": 100,
+              "minimum": 1,
+              "maximum": 100,
+              "description": "スライダーでこれより大きい値にしても、この値で止まります。"
+            },
+            "inputs": {
+              "type": "array",
+              "title": "入力ソース",
+              "description": "未指定の場合は HDMI 1〜4 が登録されます。",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "表示名",
+                    "required": true
+                  },
+                  "type": {
+                    "type": "string",
+                    "title": "種類",
+                    "default": "hdmi",
+                    "oneOf": [
+                      {
+                        "title": "HDMI",
+                        "enum": [
+                          "hdmi"
+                        ]
+                      },
+                      {
+                        "title": "放送（地デジ・BS・CS）",
+                        "enum": [
+                          "tuner"
+                        ]
+                      },
+                      {
+                        "title": "アプリ",
+                        "enum": [
+                          "app"
+                        ]
+                      },
+                      {
+                        "title": "任意の adb shell コマンド",
+                        "enum": [
+                          "command"
+                        ]
+                      }
+                    ],
+                    "required": true
+                  },
+                  "hdmiPort": {
+                    "type": "integer",
+                    "title": "HDMI 番号",
+                    "minimum": 1,
+                    "maximum": 4,
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'hdmi';"
+                    }
+                  },
+                  "band": {
+                    "type": "string",
+                    "title": "放送",
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'tuner';"
+                    },
+                    "oneOf": [
+                      {
+                        "title": "指定しない（最後に見ていた放送）",
+                        "enum": [
+                          ""
+                        ]
+                      },
+                      {
+                        "title": "地デジ",
+                        "enum": [
+                          "terrestrial"
+                        ]
+                      },
+                      {
+                        "title": "BS",
+                        "enum": [
+                          "bs"
+                        ]
+                      },
+                      {
+                        "title": "CS",
+                        "enum": [
+                          "cs"
+                        ]
+                      }
+                    ]
+                  },
+                  "channel": {
+                    "type": "integer",
+                    "title": "ワンタッチ選局ボタン (1〜12)",
+                    "minimum": 1,
+                    "maximum": 12,
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'tuner';"
+                    },
+                    "description": "リモコンの数字ボタンの番号です。放送を指定したときだけ有効です。"
+                  },
+                  "channelDelay": {
+                    "type": "number",
+                    "title": "放送切替から選局までの待ち (秒)",
+                    "default": 2,
+                    "minimum": 0,
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'tuner';"
+                    }
+                  },
+                  "tvInputId": {
+                    "type": "string",
+                    "title": "TV Input ID (任意)",
+                    "description": "通常は不要です（テレビから自動で取得します）。`npx tcl-androidtv-tools <IP> inputs` で確認できます。",
+                    "condition": {
+                      "functionBody": "const t = model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type; return t === 'hdmi' || t === 'tuner';"
+                    }
+                  },
+                  "package": {
+                    "type": "string",
+                    "title": "パッケージ名",
+                    "placeholder": "com.google.android.youtube.tv",
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'app';"
+                    }
+                  },
+                  "activity": {
+                    "type": "string",
+                    "title": "Activity (任意)",
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'app';"
+                    }
+                  },
+                  "command": {
+                    "type": "string",
+                    "title": "adb shell コマンド",
+                    "condition": {
+                      "functionBody": "return model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type === 'command';"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

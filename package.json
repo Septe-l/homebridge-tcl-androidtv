@@ -1,0 +1,45 @@
+{
+  "name": "homebridge-tcl-androidtv",
+  "displayName": "TCL Android TV",
+  "version": "0.2.0",
+  "description": "Homebridge plugin to control TCL Android TV (e.g. 65X10) over network ADB: power, HDMI/app/broadcast input switching, channel selection and volume.",
+  "author": "Septe-l",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Septe-l/homebridge-tcl-androidtv.git"
+  },
+  "homepage": "https://github.com/Septe-l/homebridge-tcl-androidtv#readme",
+  "bugs": {
+    "url": "https://github.com/Septe-l/homebridge-tcl-androidtv/issues"
+  },
+  "main": "index.js",
+  "bin": {
+    "tcl-androidtv-tools": "bin/tools.js"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "homekit",
+    "androidtv",
+    "android-tv",
+    "tcl",
+    "adb",
+    "television",
+    "tv"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
+  },
+  "files": [
+    "index.js",
+    "src",
+    "bin",
+    "config.schema.json",
+    "README.md",
+    "LICENSE"
+  ]
+}
