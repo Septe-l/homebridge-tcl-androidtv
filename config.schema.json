@@ -2,7 +2,7 @@
   "pluginAlias": "TclAndroidTV",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "TCL Android TV をネットワーク ADB 経由で操作します。事前にテレビの「開発者向けオプション」で USB デバッグ（ネットワークデバッグ）を有効にし、Homebridge ホストに adb をインストールしてください。",
+  "headerDisplay": "TCL Android TV をネットワーク ADB 経由で操作します。事前にテレビの「開発者向けオプション」で USB デバッグ（ネットワークデバッグ）を有効にし、テレビの「ネットワーク自動待機」をオンにして、Homebridge ホストに adb をインストールしてください。",
   "schema": {
     "type": "object",
     "properties": {
@@ -220,7 +220,7 @@
                   "tvInputId": {
                     "type": "string",
                     "title": "TV Input ID (任意)",
-                    "description": "通常は不要です（テレビから自動で取得します）。`npx tcl-androidtv-tools <IP> inputs` で確認できます。",
+                    "description": "通常は不要です（テレビから自動で取得します）。`npx -p homebridge-tcl-androidtv tcl-androidtv-tools <IP> inputs` で確認できます。",
                     "condition": {
                       "functionBody": "const t = model.devices[arrayIndices[0]].inputs[arrayIndices[1]].type; return t === 'hdmi' || t === 'tuner';"
                     }
